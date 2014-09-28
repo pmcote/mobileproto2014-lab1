@@ -1,7 +1,6 @@
 package pmc.lab1;
 
 import android.app.Activity;
-import android.app.ActionBar;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,7 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.os.Build;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
@@ -26,7 +25,7 @@ public class ChatActivity extends Activity {
         setContentView(R.layout.activity_chat_fragment);
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
-                    .add(R.id.container, new PlaceholderFragment())
+                    .add(R.id.container, new ChatFragment())
                     .commit();
         }
     }
@@ -53,9 +52,9 @@ public class ChatActivity extends Activity {
     /**
      * A placeholder fragment containing a simple view.
      */
-    public static class PlaceholderFragment extends Fragment {
+    public static class ChatFragment extends Fragment {
 
-        public PlaceholderFragment() {
+        public ChatFragment() {
         }
 
         @Override
@@ -63,17 +62,29 @@ public class ChatActivity extends Activity {
                 Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_chat, container, false);
 
+
             //get edit text find view by id
-            EditText chatMessage = (EditText) rootView.findViewById(R.id.editText);
+            final EditText chatMessage = (EditText) rootView.findViewById(R.id.editText);
             Log.d("chatMessage", chatMessage.getText().toString());
             //send
 
-            ListView chatView = (ListView) rootView.findViewById((R.id.listView));
+            final ListView chatView = (ListView) rootView.findViewById((R.id.listView));
 
-            List<ChatObject> fakeChats = new ArrayList<ChatObject>();
+            final List<ChatObject> fakeChats = new ArrayList<ChatObject>();
             fakeChats.add(new ChatObject("yo", "yoyo", ""));
 
-            ChatAdapter adapter = new ChatAdapter(getActivity() ,fakeChats);
+            final ChatAdapter adapter = new ChatAdapter(getActivity() ,fakeChats);
+
+            Button sendMessage = (Button) rootView.findViewById(R.id.button);
+            sendMessage.setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    String chatText = chatMessage.getText().toString();
+                    fakeChats.add(new ChatObject("Robot", chatText, ""));
+                    adapter.notifyDataSetChanged();
+                }
+            });
 
             chatView.setAdapter(adapter);
 
